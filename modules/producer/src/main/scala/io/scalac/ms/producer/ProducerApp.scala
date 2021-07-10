@@ -14,7 +14,7 @@ object ProducerApp extends App {
 
   type ProducerEnv = Any with Blocking with Producer[Any, Long, String] with Logging
 
-  override def run(args: List[String]) =
+  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
     AppConfig
       .load()
       .flatMap(config => program(config).provideSomeLayer[Any with Blocking](createLayer(config)))

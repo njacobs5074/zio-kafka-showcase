@@ -10,8 +10,7 @@ lazy val kafka = project
   .in(file("modules/kafka"))
   .settings(
     libraryDependencies ++=
-      embeddedKafka ++ logging,
-    cancelable := false
+      embeddedKafka ++ logging
   )
 
 lazy val protocol = project

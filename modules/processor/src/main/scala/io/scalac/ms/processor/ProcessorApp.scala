@@ -17,8 +17,11 @@ import io.scalac.ms.processor.config.AppConfig
 
 object ProcessorApp extends App {
 
-  override def run(args: List[String]): URIO[Blocking with Clock with Console, ExitCode] =
-    AppConfig.load().flatMap(config => Pipeline.run.provideSomeLayer(makeLayer(config)).exitCode).exitCode
+  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
+    AppConfig
+      .load()
+      .flatMap(config => Pipeline.run.provideSomeLayer(makeLayer(config)).exitCode)
+      .exitCode
 
   private def makeLayer(appConfig: AppConfig) = {
     val sttpClientLayer = AsyncHttpClientZioBackend.layer()
