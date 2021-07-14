@@ -23,7 +23,7 @@ object ProcessorApp extends App {
       .flatMap(config => Pipeline.run.provideSomeLayer(makeLayer(config)).exitCode)
       .exitCode
 
-  private def makeLayer(appConfig: AppConfig) = {
+  private def makeLayer(appConfig: AppConfig): ZLayer[Clock with Blocking, Throwable, Pipeline] = {
     val sttpClientLayer = AsyncHttpClientZioBackend.layer()
     val loggingLayer = Slf4jLogger.make { (context, message) =>
       val correlationId = context.get(LogAnnotation.CorrelationId)
@@ -39,7 +39,7 @@ object ProcessorApp extends App {
       ++ enrichmentLayer) >>> Pipeline.live(appConfig)
   }
 
-  private def makeKafkaLayer(appConfig: AppConfig) = {
+  private def makeKafkaLayer(appConfig: AppConfig): ZLayer[Clock with Blocking, Throwable, Has[Consumer.Service] with Has[Producer.Service[Any, Long, String]]] = {
     val consumerSettings =
       ConsumerSettings(appConfig.consumer.brokers)
         .withGroupId(appConfig.consumer.groupId)

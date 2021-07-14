@@ -22,7 +22,7 @@ object ProducerApp extends App {
 
   private def program(appConfig: AppConfig): ZIO[ProducerEnv, Throwable, Unit] =
     ZStream
-      .fromIterable(EventGenerator.transactions)
+      .fromIterable(EventGenerator.randomTransactions())
       .map(transaction => new ProducerRecord(appConfig.topic, transaction.userId, transaction.asJson.toString))
       .mapM { producerRecord =>
         log.info(s"Producing $producerRecord to Kafka...") *>
